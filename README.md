@@ -1,4 +1,4 @@
-- 👋 Hi, I’m @mahimakesh8697
+- 👋 Hi, I’m Makesh kumar A
 - 👀 I’m interested in learning
 - 🌱 I’m currently learning Data Science
 - 💞️ I’m looking to collaborate on ...
