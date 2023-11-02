@@ -50,8 +50,9 @@ style.set_theme("radiance")  # You can try different themes
 entry = tk.Entry(root, width=30, font=('Arial', 20))
 entry.grid(row=0, column=0, columnspan=4, padx=20, pady=20)
 
-# Define button colors and font
-button_font = ('Arial', 16)
+# Create a custom style for ttk buttons and set the font
+custom_button_style = ttk.Style()
+custom_button_style.configure("Custom.TButton", font=('Arial', 16))
 
 buttons = [
     '7', '8', '9', '/',
@@ -66,7 +67,7 @@ row = 1
 col = 0
 
 for button in buttons:
-    btn = ttk.Button(root, text=button, padding=20, font=button_font)
+    btn = ttk.Button(root, text=button, padding=20, style="Custom.TButton")  # Apply the custom style here
     btn.grid(row=row, column=col)
     btn.bind("<Button-1>", button_click)
     col += 1
@@ -75,4 +76,3 @@ for button in buttons:
         row += 1
 
 root.mainloop()
-
