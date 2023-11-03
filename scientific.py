@@ -45,7 +45,7 @@ root.title("Scientific Calculator")
 
 # Apply a theme
 style = ThemedStyle(root)
-style.set_theme("radiance")  # You can try different themes
+style.set_theme("radiance") 
 
 entry = tk.Entry(root, width=30, font=('Arial', 20))
 entry.grid(row=0, column=0, columnspan=4, padx=20, pady=20)
