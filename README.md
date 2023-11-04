@@ -19,7 +19,6 @@ MONGODB: MongoDB is built on a scale-out architecture that has become popular wi
 
 SQLite3: SQLite is a C library that provides a lightweight disk-based database that doesn't require a separate server process and allows accessing the database using a nonstandard variant of the SQL query language. It's very lightweight, so it doesn't require much time or effort to set up or maintain.
 
-YOUTUBE DATA SCRAPPING AND ITS ETHICAL PERSPECTIVE: When engaging in the scraping of YouTube content, it is crucial to approach it ethically and responsibly. Respecting YouTube's terms and conditions, obtaining appropriate authorization, and adhering to data protection regulations are fundamental considerations. The collected data must be handled responsibly, ensuring privacy, confidentiality, and preventing any form of misuse or misrepresentation. Furthermore, it is important to take into account the potential impact on the platform and its community, striving for a fair and sustainable scraping process. By following these ethical guidelines, we can uphold integrity while extracting valuable insights from YouTube data.
 
 REQUIRED LIBRARIES:
 
