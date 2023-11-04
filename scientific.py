@@ -37,6 +37,10 @@ def button_click(event):
     elif text == "log":
         entry.delete(0, tk.END)
         entry.insert(tk.END, str(math.log10(float(current))))
+    elif text == "%":
+        entry.delete(0, tk.END)
+        entry.insert(tk.END, str(float(current) / 100))    
+
     else:
         entry.insert(tk.END, text)
 
@@ -45,7 +49,7 @@ root.title("Scientific Calculator")
 
 # Apply a theme
 style = ThemedStyle(root)
-style.set_theme("radiance") 
+style.set_theme("radiance")  
 
 entry = tk.Entry(root, width=30, font=('Arial', 20))
 entry.grid(row=0, column=0, columnspan=4, padx=20, pady=20)
@@ -59,7 +63,7 @@ buttons = [
     '4', '5', '6', '*',
     '1', '2', '3', '-',
     '0', 'C', '=', '+',
-    '.', 'sqrt', 'x^2', 'x^y',
+    '.', 'sqrt', 'x^2',"%" ,
     'sin', 'cos', 'tan', 'log'
 ]
 
@@ -67,7 +71,7 @@ row = 1
 col = 0
 
 for button in buttons:
-    btn = ttk.Button(root, text=button, padding=20, style="Custom.TButton")  # Apply the custom style here
+    btn = ttk.Button(root, text=button, padding=20, style="Custom.TButton")
     btn.grid(row=row, column=col)
     btn.bind("<Button-1>", button_click)
     col += 1
