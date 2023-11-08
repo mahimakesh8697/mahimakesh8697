@@ -214,18 +214,16 @@ def channel_details(channel_id):
 import pymongo
 import sqlite3
 
-########3Connect to MongoDB############
+# Connect to MongoDB
 mongo_client = pymongo.MongoClient("mongodb+srv://makeshk349:mahimahi12@cluster0.t0lvtsh.mongodb.net/")
 mongo_db = mongo_client["Youtube_data"]
 my_collection = mongo_db["channel_details"]
 
-
-##########3Define SQLite database connection###########3
+# Define SQLite database connection
 conn = sqlite3.connect('youtube_data.db')
 cursor = conn.cursor()
 
-
-#############Create and populate channels table##############
+# Create and populate channels table
 try:
     cursor.execute('''
       CREATE TABLE IF NOT EXISTS channels (
@@ -268,195 +266,27 @@ except sqlite3.Error as e:
 
 finally:
     conn.close()
-##########################################################################################################################################################################
-
-
-
-
-
-
-import pymongo
-import sqlite3
-import pandas as pd
-
-#############Connect to MongoDB####################
-
-mongo_client = pymongo.MongoClient("mongodb+srv://makeshk349:mahimahi12@cluster0.t0lvtsh.mongodb.net/")
-mongo_db = mongo_client["Youtube_data"]
-my_collection = mongo_db["channel_details"]
-
-########## Retrieve data from MongoDB and convert it to a Pandas DataFrame#############
-data = list(my_collection.find())
-df = pd.DataFrame(data)
-
-
-########Define SQLite database connection########3
-conn = sqlite3.connect('youtube_data.db')
-cursor = conn.cursor()
-
-#############Create and populate playlists table###########
-try:
-    cursor.execute('''
-      CREATE TABLE IF NOT EXISTS playlists (
-        PlaylistId TEXT PRIMARY KEY,
-        Title TEXT,
-        ChannelId TEXT,
-        ChannelName TEXT,
-        PublishedAt TIMESTAMP,
-        VideoCount INTEGER
-      )
-    ''')
-
-    insert_query_playlists = '''
-        INSERT OR IGNORE INTO playlists (PlaylistId, Title, ChannelId, ChannelName, PublishedAt, VideoCount)
-        VALUES (?, ?, ?, ?, ?, ?)
-    '''
-
-    inserted_count = 0  ###Variable to track the number of inserted rows##
-
-    #################Iterate through the DataFrame and insert data into the SQLite database###############
-
-    for index, row in df.iterrows():
-        playlist_info_list = row.get('playlist_information', [])
-
-        for playlist_info in playlist_info_list:
-            playlist_id = playlist_info.get('PlaylistId', '')  # Access 'PlaylistId' from 'playlist_information'
-            title = playlist_info.get('Title', '')  # Access 'Title' from 'playlist_information'
-            channel_id = playlist_info.get('ChannelId', '')  # Access 'ChannelId' from 'playlist_information'
-            channel_name = playlist_info.get('ChannelName', '')  # Access 'ChannelName' from 'playlist_information'
-            published_at = playlist_info.get('PublishedAt', '')  # Access 'PublishedAt' from 'playlist_information'
-            video_count = playlist_info.get('VideoCount', 0)  # Access 'VideoCount' from 'playlist_information'
-
-            cursor.execute(insert_query_playlists, (playlist_id, title, channel_id, channel_name, published_at, video_count))
-            inserted_count += 1
-
-    conn.commit()
-
-    if inserted_count > 0:
-        print(f"{inserted_count} rows inserted into the 'playlists' table.")
-    else:
-        print("No data inserted into the 'playlists' table.")
-
-except sqlite3.Error as e:
-    print(f"SQLite error: {e}")
-
-finally:
-    conn.close()
-
-
-
-
-
-
-
-
-
-
-#########################################################################################################################################################################################
-
-import pymongo
-import sqlite3
-
-#####Connect to MongoDB###########
-
-mongo_client = pymongo.MongoClient("mongodb+srv://makeshk349:mahimahi12@cluster0.t0lvtsh.mongodb.net/")
-mongo_db = mongo_client["Youtube_data"]
-my_collection = mongo_db["channel_details"]
-
-#######3Retrieve data from MongoDB#######
-data = list(my_collection.find())
-
-#########Define SQLite database connection########
-conn = sqlite3.connect('youtube_data.db')
-cursor = conn.cursor()
-
-##########Create and populate videos table#############
-try:
-    cursor.execute('''
-      CREATE TABLE IF NOT EXISTS videos (
-        Channel_Id TEXT,
-        Video_Id TEXT PRIMARY KEY,
-        Title TEXT,
-        Tags TEXT,
-        Thumbnail TEXT,
-        Description TEXT,
-        Published_Date TIMESTAMP,
-        Duration INTERVAL,
-        Views INTEGER,
-        Likes INTEGER,
-        Comments INTEGER,
-        Favorite_Count INTEGER,
-        Definition TEXT,
-        Caption_Status TEXT
-      )
-    ''')
-
-    insert_query_videos = '''
-        INSERT OR IGNORE INTO videos (Channel_Id, Video_Id, Title, Tags, Thumbnail, Description, Published_Date, Duration, Views, Likes, Comments, Favorite_Count, Definition, Caption_Status)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    '''
-
-    inserted_count = 0  ##Variable to track the number of inserted rows#######
-
-    #########Iterate through the data and insert it into the SQLite database#########
-
-    for row in data:
-        video_info_list = row.get('video_information', [])
-        for video_info in video_info_list:
-            channel_id = video_info.get('channel_id', '')
-            video_id = video_info.get('video_id', '')
-            title = video_info.get('title', '')
-            tags = ', '.join(video_info.get('tags', []))
-            thumbnail = video_info.get('thumbnail', '')
-            description = video_info.get('description', '')
-            published_date = video_info.get('published_date', '')
-            duration = video_info.get('duration', '')
-            views = int(video_info.get('views', 0))
-            likes = int(video_info.get('likes', 0))
-            comments = int(video_info.get('comments', 0))
-            favorite_count = int(video_info.get('favorite_count', 0))
-            definition = video_info.get('definition', '')
-            caption_status = video_info.get('caption_status', '')
-
-            cursor.execute(insert_query_videos, (
-                channel_id, video_id, title, tags, thumbnail, description, published_date, duration, views, likes, comments, favorite_count, definition, caption_status
-            ))
-            inserted_count += 1
-
-    conn.commit()
-
-    if inserted_count > 0:
-        print(f"{inserted_count} rows inserted into the 'videos' table.")
-    else:
-        print("No data inserted into the 'videos' table.")
-
-except sqlite3.Error as e:
-    print(f"SQLite error (videos): {e}")
-
-finally:
-    conn.close()
-##################################################################################################################################################################################
-
+##############################################################################################################################################################################
 
 import pymongo
 import sqlite3
 import pandas as pd
 import json
 
-##############Connect to MongoDB####################
+# Connect to MongoDB
 mongo_client = pymongo.MongoClient("mongodb+srv://makeshk349:mahimahi12@cluster0.t0lvtsh.mongodb.net/")
 mongo_db = mongo_client["Youtube_data"]
 my_collection = mongo_db["channel_details"]
 
-#############3Retrieve data from MongoDB and convert it to a Pandas DataFrame##############
+# Retrieve data from MongoDB and convert it to a Pandas DataFrame
 data = list(my_collection.find())
 df = pd.DataFrame(data)
 
-#########3Define SQLite database connection########3
+# Define SQLite database connection
 conn = sqlite3.connect('youtube_data.db')
 cursor = conn.cursor()
 
-############Create and populate comments table###################
+# Create and populate comments table
 try:
     cursor.execute('''
       CREATE TABLE IF NOT EXISTS comments (
@@ -473,10 +303,9 @@ try:
         VALUES (?, ?, ?, ?, ?)
     '''
 
-    inserted_count = 0  ###Variable to track the number of inserted rows###
+    inserted_count = 0  # Variable to track the number of inserted rows
 
-    ##########Iterate through the DataFrame and insert data into the SQLite database#############
-
+    # Iterate through the DataFrame and insert data into the SQLite database
     for index, row in df.iterrows():
         comment_id = str(row['_id'])  # Assuming '_id' is the Comment_Id
 
@@ -505,6 +334,131 @@ except sqlite3.Error as e:
 
 finally:
     conn.close()
+###########################################
+
+
+import pymongo
+import sqlite3
+from datetime import datetime
+
+# Function to convert a date string to a timestamp
+def date_to_timestamp(date_str):
+    # Assuming the date_str is in the format '2023-09-22T11:46:35Z'
+    date_obj = datetime.strptime(date_str, "%Y-%m-%dT%H:%M:%SZ")
+    timestamp = int(date_obj.timestamp())
+    return timestamp
+
+# Function to convert duration in ISO 8601 format to seconds
+def duration_to_seconds(duration_str):
+    # Check if the duration string starts with 'PT' (indicating a period of time)
+    if duration_str.startswith('PT'):
+        duration_str = duration_str[2:]  # Remove the 'PT' prefix
+        seconds = 0
+        part = ''
+        for char in duration_str:
+            if char.isdigit():
+                part += char
+            elif char == 'S':
+                seconds += int(part)
+                part = ''
+            elif char == 'M':
+                seconds += int(part) * 60
+                part = ''
+            elif char == 'H':
+                seconds += int(part) * 3600
+                part = ''
+        return seconds
+    else:
+        return 0
+
+# Connect to MongoDB
+mongo_client = pymongo.MongoClient("mongodb+srv://makeshk349:mahimahi12@cluster0.t0lvtsh.mongodb.net/")
+mongo_db = mongo_client["Youtube_data"]
+my_collection = mongo_db["channel_details"]
+
+# Retrieve data from MongoDB
+data = list(my_collection.find())
+
+# Define SQLite database connection
+conn = sqlite3.connect('youtube_data.db')
+cursor = conn.cursor()
+
+# Create and populate videos table
+try:
+    cursor.execute('''
+      CREATE TABLE IF NOT EXISTS videos (
+        Channel_Id TEXT,
+        Video_Id TEXT PRIMARY KEY,
+        Channel_Name TEXT,
+        Title TEXT,
+        Tags TEXT,
+        Thumbnail TEXT,
+        Description TEXT,
+        Published_Date INTEGER,  -- Updated data type to INTEGER
+        Duration INTEGER,  -- Change the column name to 'Duration'
+        Views INTEGER,
+        Likes INTEGER,
+        Comments INTEGER,
+        Favorite_Count INTEGER,
+        Definition TEXT,
+        Caption_Status TEXT
+      )
+    ''')
+
+    insert_query_videos = '''
+        INSERT OR REPLACE INTO videos (Channel_Id, Video_Id, Channel_Name, Title, Tags, Thumbnail, Description, Published_Date, Duration, Views, Likes, Comments, Favorite_Count, Definition, Caption_Status)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    '''
+
+    inserted_count = 0
+
+    for row in data:
+        video_info_list = row.get('video_information', [])  # Modify based on your MongoDB data structure
+        channel_information = row.get('channel_information', {})
+
+        # Extract channel name from channel information, or set a default value if it's null
+        channel_name = channel_information.get('Channel_Name', 'Unknown Channel')
+
+        for video_info in video_info_list:
+            if channel_name == 'Unknown Channel':
+                # Skip records with channel_name 'Unknown Channel'
+                continue
+
+            channel_id = video_info['Channel_Id']
+            video_id = video_info['Video_Id']
+            title = video_info['Title']
+            tags = ', '.join(tag for tag in video_info.get('Tags', [])) if video_info.get('Tags') is not None else ''  # Join 'Tags' within the list
+            thumbnail = video_info['Thumbnail']
+            description = video_info['Description']
+            published_date_str = video_info['Published_Date']
+            published_date = date_to_timestamp(published_date_str)
+            duration_str = video_info['Duration']
+            duration = duration_to_seconds(duration_str)
+            views = int(video_info['Views'])
+            likes = int(video_info['Likes']) if video_info['Likes'] is not None else 0
+            comments = int(video_info['Comments']) if video_info['Comments'] is not None else 0
+            favorite_count = int(video_info['Favorite_Count']) if video_info['Favorite_Count'] is not None else 0
+            definition = video_info['Definition']
+            caption_status = video_info['Caption_Status']
+
+            cursor.execute(insert_query_videos, (
+                channel_id, video_id, channel_name, title, tags, thumbnail, description, published_date, duration, views, likes, comments, favorite_count, definition, caption_status
+            ))
+            inserted_count += 1
+
+    conn.commit()
+
+    if inserted_count > 0:
+        print(f"{inserted_count} rows inserted or updated in the 'videos' table.")
+    else:
+        print("No valid data inserted into the 'videos' table.")
+
+except sqlite3.Error as e:
+    print(f"SQLite error (videos): {e}")
+
+finally:
+    conn.close()
+
 #####################################################################################################################################################################
 
 #####################################################################################################################################################################
