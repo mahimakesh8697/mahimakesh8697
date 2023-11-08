@@ -214,16 +214,18 @@ def channel_details(channel_id):
 import pymongo
 import sqlite3
 
-# Connect to MongoDB
+########3Connect to MongoDB############
 mongo_client = pymongo.MongoClient("mongodb+srv://makeshk349:mahimahi12@cluster0.t0lvtsh.mongodb.net/")
 mongo_db = mongo_client["Youtube_data"]
 my_collection = mongo_db["channel_details"]
 
-# Define SQLite database connection
+
+##########3Define SQLite database connection###########3
 conn = sqlite3.connect('youtube_data.db')
 cursor = conn.cursor()
 
-# Create and populate channels table
+
+#############Create and populate channels table##############
 try:
     cursor.execute('''
       CREATE TABLE IF NOT EXISTS channels (
@@ -266,77 +268,91 @@ except sqlite3.Error as e:
 
 finally:
     conn.close()
-##############################################################################################################################################################################
+##########################################################################################################################################################################
+
+
+
+
+
 
 import pymongo
 import sqlite3
 import pandas as pd
-import json
 
-# Connect to MongoDB
+#############Connect to MongoDB####################
+
 mongo_client = pymongo.MongoClient("mongodb+srv://makeshk349:mahimahi12@cluster0.t0lvtsh.mongodb.net/")
 mongo_db = mongo_client["Youtube_data"]
 my_collection = mongo_db["channel_details"]
 
-# Retrieve data from MongoDB and convert it to a Pandas DataFrame
+########## Retrieve data from MongoDB and convert it to a Pandas DataFrame#############
 data = list(my_collection.find())
 df = pd.DataFrame(data)
 
-# Define SQLite database connection
+
+########Define SQLite database connection########3
 conn = sqlite3.connect('youtube_data.db')
 cursor = conn.cursor()
 
-# Create and populate comments table
+#############Create and populate playlists table###########
 try:
     cursor.execute('''
-      CREATE TABLE IF NOT EXISTS comments (
-        Comment_Id TEXT PRIMARY KEY,
-        Video_Id TEXT,
-        Comment_Text TEXT,
-        Comment_Author TEXT,
-        Comment_Published TIMESTAMP
+      CREATE TABLE IF NOT EXISTS playlists (
+        PlaylistId TEXT PRIMARY KEY,
+        Title TEXT,
+        ChannelId TEXT,
+        ChannelName TEXT,
+        PublishedAt TIMESTAMP,
+        VideoCount INTEGER
       )
     ''')
 
-    insert_query_comments = '''
-        INSERT OR IGNORE INTO comments (Comment_Id, Video_Id, Comment_Text, Comment_Author, Comment_Published)
-        VALUES (?, ?, ?, ?, ?)
+    insert_query_playlists = '''
+        INSERT OR IGNORE INTO playlists (PlaylistId, Title, ChannelId, ChannelName, PublishedAt, VideoCount)
+        VALUES (?, ?, ?, ?, ?, ?)
     '''
 
-    inserted_count = 0  # Variable to track the number of inserted rows
+    inserted_count = 0  ###Variable to track the number of inserted rows##
 
-    # Iterate through the DataFrame and insert data into the SQLite database
+    #################Iterate through the DataFrame and insert data into the SQLite database###############
+
     for index, row in df.iterrows():
-        comment_id = str(row['_id'])  # Assuming '_id' is the Comment_Id
+        playlist_info_list = row.get('playlist_information', [])
 
-        # Access the list 'comment_information'
-        comment_information = row.get('comment_information', [])
+        for playlist_info in playlist_info_list:
+            playlist_id = playlist_info.get('PlaylistId', '')  # Access 'PlaylistId' from 'playlist_information'
+            title = playlist_info.get('Title', '')  # Access 'Title' from 'playlist_information'
+            channel_id = playlist_info.get('ChannelId', '')  # Access 'ChannelId' from 'playlist_information'
+            channel_name = playlist_info.get('ChannelName', '')  # Access 'ChannelName' from 'playlist_information'
+            published_at = playlist_info.get('PublishedAt', '')  # Access 'PublishedAt' from 'playlist_information'
+            video_count = playlist_info.get('VideoCount', 0)  # Access 'VideoCount' from 'playlist_information'
 
-        if comment_information:
-            for info in comment_information:
-                video_id = info.get('video_id', '')  # Access the 'video_id' field within the list
-                comment_text = json.dumps(info.get('comment_text', {}))  # Access the 'comment_text' field within the list
-                comment_author = info.get('comment_author', '')  # Access the 'comment_author' field within the list
-                comment_published = info.get('comment_published', '')  # Access the 'comment_published' field within the list
-
-                cursor.execute(insert_query_comments, (comment_id, video_id, comment_text, comment_author, comment_published))
-                inserted_count += 1
+            cursor.execute(insert_query_playlists, (playlist_id, title, channel_id, channel_name, published_at, video_count))
+            inserted_count += 1
 
     conn.commit()
 
     if inserted_count > 0:
-        print(f"{inserted_count} rows inserted into the 'comments' table.")
+        print(f"{inserted_count} rows inserted into the 'playlists' table.")
     else:
-        print("No data inserted into the 'comments' table.")
+        print("No data inserted into the 'playlists' table.")
 
 except sqlite3.Error as e:
     print(f"SQLite error: {e}")
 
 finally:
     conn.close()
-###########################################
 
 
+
+
+
+
+
+
+
+
+#########################################################################################################################################################################################
 import pymongo
 import sqlite3
 from datetime import datetime
@@ -459,6 +475,76 @@ except sqlite3.Error as e:
 finally:
     conn.close()
 
+##################################################################################################################################################################################
+
+
+import pymongo
+import sqlite3
+import pandas as pd
+import json
+
+##############Connect to MongoDB####################
+mongo_client = pymongo.MongoClient("mongodb+srv://makeshk349:mahimahi12@cluster0.t0lvtsh.mongodb.net/")
+mongo_db = mongo_client["Youtube_data"]
+my_collection = mongo_db["channel_details"]
+
+#############3Retrieve data from MongoDB and convert it to a Pandas DataFrame##############
+data = list(my_collection.find())
+df = pd.DataFrame(data)
+
+#########3Define SQLite database connection########3
+conn = sqlite3.connect('youtube_data.db')
+cursor = conn.cursor()
+
+############Create and populate comments table###################
+try:
+    cursor.execute('''
+      CREATE TABLE IF NOT EXISTS comments (
+        Comment_Id TEXT PRIMARY KEY,
+        Video_Id TEXT,
+        Comment_Text TEXT,
+        Comment_Author TEXT,
+        Comment_Published TIMESTAMP
+      )
+    ''')
+
+    insert_query_comments = '''
+        INSERT OR IGNORE INTO comments (Comment_Id, Video_Id, Comment_Text, Comment_Author, Comment_Published)
+        VALUES (?, ?, ?, ?, ?)
+    '''
+
+    inserted_count = 0  ###Variable to track the number of inserted rows###
+
+    ##########Iterate through the DataFrame and insert data into the SQLite database#############
+
+    for index, row in df.iterrows():
+        comment_id = str(row['_id'])  # Assuming '_id' is the Comment_Id
+
+        # Access the list 'comment_information'
+        comment_information = row.get('comment_information', [])
+
+        if comment_information:
+            for info in comment_information:
+                video_id = info.get('video_id', '')  # Access the 'video_id' field within the list
+                comment_text = json.dumps(info.get('comment_text', {}))  # Access the 'comment_text' field within the list
+                comment_author = info.get('comment_author', '')  # Access the 'comment_author' field within the list
+                comment_published = info.get('comment_published', '')  # Access the 'comment_published' field within the list
+
+                cursor.execute(insert_query_comments, (comment_id, video_id, comment_text, comment_author, comment_published))
+                inserted_count += 1
+
+    conn.commit()
+
+    if inserted_count > 0:
+        print(f"{inserted_count} rows inserted into the 'comments' table.")
+    else:
+        print("No data inserted into the 'comments' table.")
+
+except sqlite3.Error as e:
+    print(f"SQLite error: {e}")
+
+finally:
+    conn.close()
 #####################################################################################################################################################################
 
 #####################################################################################################################################################################
